@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">BigDigAppA</string>
+    <string name="tab_1_name">Тест</string>
+    <string name="tab_2_name">История</string>
+    <string name="edit_text_hint">Введите URL картинки</string>
+    <string name="button_open_text">Ок</string>
+</resources>
