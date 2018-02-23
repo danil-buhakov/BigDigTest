@@ -16,6 +16,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider
+            android:authorities="com.bigdig.dan.provider.History"
+            android:name=".DbContentProvider"
+            android:exported="true"/>
     </application>
 
 </manifest>
