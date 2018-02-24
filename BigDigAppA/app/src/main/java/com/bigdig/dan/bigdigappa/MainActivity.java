@@ -3,6 +3,7 @@ package com.bigdig.dan.bigdigappa;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -107,8 +108,10 @@ public class MainActivity extends AppCompatActivity {
     private class LinkHolder extends RecyclerView.ViewHolder {
         TextView mUrlTextView;
         TextView mTimeTextView;
+        View cardView;
         public LinkHolder(View itemView) {
             super(itemView);
+            cardView = itemView;
             mUrlTextView = itemView.findViewById(R.id.url);
             mTimeTextView = itemView.findViewById(R.id.time);
         }
@@ -119,6 +122,17 @@ public class MainActivity extends AppCompatActivity {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM HH:mm:ss");
             String time = simpleDateFormat.format(linkDate);
             mTimeTextView.setText(String.valueOf(time));
+            switch(link.getStatus()){
+                case 1:
+                    cardView.setBackgroundColor(Color.GREEN);
+                    break;
+                case 2:
+                    cardView.setBackgroundColor(Color.RED);
+                    break;
+                case 3:
+                    cardView.setBackgroundColor(Color.GRAY);
+                    break;
+            }
         }
     }
 

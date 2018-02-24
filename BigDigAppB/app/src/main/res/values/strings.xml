@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">BigDigAppB</string>
+    <string name="info_no_connection">Отсутствует интернет соедниенеие</string>
 </resources>
