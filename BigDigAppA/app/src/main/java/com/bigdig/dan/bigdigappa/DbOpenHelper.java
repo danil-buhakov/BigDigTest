@@ -8,9 +8,9 @@ public class DbOpenHelper extends SQLiteOpenHelper {
     private static final int VERSION = 1;
     private static final String DB_NAME = "historyBase.db";
     public final static String TABLE_NAME = "history";
-    private final static String URL = "url";
-    private final static String STATUS = "status";
-    private final static String TIME = "time";
+    public final static String URL = "url";
+    public final static String STATUS = "status";
+    public final static String TIME = "time";
 
     public DbOpenHelper(Context context) {
         super(context, DB_NAME, null, VERSION);
