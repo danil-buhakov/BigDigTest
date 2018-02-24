@@ -12,6 +12,8 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.Calendar;
+
 public class MainActivity extends AppCompatActivity {
 
     final String LOG_TAG = "MainActivity";
@@ -33,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
             urls="";
         else {
             Picasso.with(this).load(urls).into(loadedImage);
-            insertLink(urls,1, System.currentTimeMillis());
+            insertLink(urls,1, Calendar.getInstance().getTimeInMillis());
             }
     }
 

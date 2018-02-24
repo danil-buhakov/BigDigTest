@@ -3,14 +3,15 @@ package com.bigdig.dan.bigdigappa;
 import android.database.Cursor;
 
 import java.util.ArrayList;
+import java.sql.Date;
 import java.util.List;
 
 public class Link {
     private String mUrl;
     private int mStatus;
-    private long mTime;
+    private Date mTime;
 
-    public Link(String url, int status, long time){
+    public Link(String url, int status, Date time){
         mUrl = url;
         mStatus = status;
         mTime = time;
@@ -24,7 +25,7 @@ public class Link {
         return mStatus;
     }
 
-    public long getTime() {
+    public Date getTime() {
         return mTime;
     }
 
@@ -35,7 +36,8 @@ public class Link {
             String url = cursor.getString(cursor.getColumnIndex(DbOpenHelper.URL));
             int status = cursor.getInt(cursor.getColumnIndex(DbOpenHelper.STATUS));
             long time = cursor.getLong(cursor.getColumnIndex(DbOpenHelper.TIME));
-            Link new_link = new Link(url,status,time);
+            Date date = new Date(time);
+            Link new_link = new Link(url,status,date);
             result.add(new_link);
             cursor.moveToNext();
         }

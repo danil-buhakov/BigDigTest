@@ -19,6 +19,8 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,7 +115,10 @@ public class MainActivity extends AppCompatActivity {
 
         public void bindLink(Link link){
             mUrlTextView.setText(link.getUrl());
-            mTimeTextView.setText(String.valueOf(link.getTime()));
+            Date linkDate = link.getTime();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM HH:mm:ss");
+            String time = simpleDateFormat.format(linkDate);
+            mTimeTextView.setText(String.valueOf(time));
         }
     }
 
