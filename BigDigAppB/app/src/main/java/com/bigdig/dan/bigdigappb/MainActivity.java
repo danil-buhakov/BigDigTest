@@ -2,23 +2,18 @@ package com.bigdig.dan.bigdigappb;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.TimeUtils;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
 
 import java.util.Calendar;
 
@@ -26,13 +21,13 @@ public class MainActivity extends AppCompatActivity {
 
     final String LOG_TAG = "MainActivity";
 
-    final Uri CONTACT_URI = Uri
+    public static final Uri HISTORY_URI = Uri
             .parse("content://com.bigdig.dan.provider.History/history");
 
     private final static String URL = "url";
     private final static String STATUS = "status";
     private final static String TIME = "time";
-    private final static String ID = "_id";
+    public final static String ID = "_id";
 
     private String urls;
     private ImageView loadedImage;
@@ -73,9 +68,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void calledFromHistory() {
-        Toast.makeText(this, "calledFromHistory", Toast.LENGTH_SHORT).show();
         if (mStatus == 1) {
-            //todo: make exit on 15 seconds here
+            if (hasConnection(this)) {
+                loadImage();
+                Intent serviceIntent = new Intent(this, DeletionService.class);
+                serviceIntent.putExtra("Id", getIntent().getIntExtra("Id", -1));
+                startService(serviceIntent);
+            } else {
+                setNoInternetInfoMessage();
+            }
         } else {
             tryLoadImage();
         }
@@ -87,13 +88,11 @@ public class MainActivity extends AppCompatActivity {
         Picasso.with(this).load(urls).placeholder(android.R.drawable.stat_sys_download).into(loadedImage, new Callback() {
             @Override
             public void onSuccess() {
-                Toast.makeText(MainActivity.this, "onSuccess", Toast.LENGTH_SHORT).show();
                 insertOrUpdate(1);
             }
 
             @Override
             public void onError() {
-                Toast.makeText(MainActivity.this, "onError", Toast.LENGTH_SHORT).show();
                 insertOrUpdate(2);
             }
         });
@@ -118,17 +117,15 @@ public class MainActivity extends AppCompatActivity {
         cv.put(URL, urls);
         cv.put(STATUS, status);
         cv.put(TIME, time);
-        getContentResolver().insert(CONTACT_URI, cv);
+        getContentResolver().insert(HISTORY_URI, cv);
     }
 
     private void updateLink(int status, long time) {
-        Toast.makeText(this, "updateLink", Toast.LENGTH_SHORT).show();
         ContentValues cv = new ContentValues();
         cv.put(URL, urls);
         cv.put(STATUS, status);
         cv.put(TIME, time);
-        int result = getContentResolver().update(CONTACT_URI, cv, ID + "= ?", new String[]{String.valueOf(getIntent().getIntExtra("Id", 0))});
-        Toast.makeText(this, "result = " + result, Toast.LENGTH_SHORT).show();
+        int result = getContentResolver().update(HISTORY_URI, cv, ID + "= ?", new String[]{String.valueOf(getIntent().getIntExtra("Id", 0))});
     }
 
     public static boolean hasConnection(final Context context) {

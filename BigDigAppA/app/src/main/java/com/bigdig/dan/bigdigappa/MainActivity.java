@@ -1,6 +1,7 @@
 package com.bigdig.dan.bigdigappa;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -25,6 +26,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String BROADCAST_DB_UPDATE = "com.bigdig.dan.actin.DB_UPDATED";
+
     private EditText editTextUrl;
 
     private DbOpenHelper mDbOpenHelper;
@@ -35,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem mMenuItemSortTime;
     private MenuItem mMenuItemSortStatus;
     private int mSortWas;
+    private DbUpdateReceiver mDbUpdateReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
     private void initDatabase() {
         mDbOpenHelper = new DbOpenHelper(this);
         mDatabase = mDbOpenHelper.getReadableDatabase();
+        mDbUpdateReceiver = new DbUpdateReceiver(this);
     }
 
     private void initUI() {
@@ -106,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(i);
     }
 
-    private void updateLinks() {
+    public void updateLinks() {
         Cursor cursor = mDatabase
                 .query(
                         DbOpenHelper.TABLE_NAME,
@@ -181,7 +186,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         updateLinks();
+        this.registerReceiver(mDbUpdateReceiver,new IntentFilter(BROADCAST_DB_UPDATE));
         super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        this.unregisterReceiver(mDbUpdateReceiver);
+        super.onPause();
     }
 
     private class LinkHolder extends RecyclerView.ViewHolder {
