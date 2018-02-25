@@ -32,57 +32,103 @@ public class MainActivity extends AppCompatActivity {
     private final static String URL = "url";
     private final static String STATUS = "status";
     private final static String TIME = "time";
+    private final static String ID = "_id";
 
     private String urls;
     private ImageView loadedImage;
     private TextView infoTextView;
+    private int mStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        init();
+        mStatus = getIntent().getIntExtra("Status", -1);
+        if (mStatus == -1)
+            calledFromTest();
+        else
+            calledFromHistory();
+    }
+
+    private void init() {
         urls = getIntent().getStringExtra("String");
         loadedImage = (ImageView) findViewById(R.id.loaded_image);
         infoTextView = (TextView) findViewById(R.id.txt_info);
-        if (urls == null)
-            urls = "";
-        else if (hasConnection(this)) {
+    }
+
+    private void calledFromTest() {
+        if (urls == null) {
+            //todo: implement timer
+        } else
+            tryLoadImage();
+    }
+
+    private void tryLoadImage() {
+        if (hasConnection(this)) {
             loadImage();
-        } else{
+        } else {
             setNoInternetInfoMessage();
         }
     }
 
-    private void loadImage(){
+    private void calledFromHistory() {
+        Toast.makeText(this, "calledFromHistory", Toast.LENGTH_SHORT).show();
+        if (mStatus == 1) {
+            //todo: make exit on 15 seconds here
+        } else {
+            tryLoadImage();
+        }
+    }
+
+    private void loadImage() {
         loadedImage.setVisibility(View.VISIBLE);
         infoTextView.setVisibility(View.GONE);
         Picasso.with(this).load(urls).placeholder(android.R.drawable.stat_sys_download).into(loadedImage, new Callback() {
             @Override
             public void onSuccess() {
-                insertLink(urls, 1, Calendar.getInstance().getTimeInMillis());
+                Toast.makeText(MainActivity.this, "onSuccess", Toast.LENGTH_SHORT).show();
+                insertOrUpdate(1);
             }
+
             @Override
             public void onError() {
-                insertLink(urls, 2, Calendar.getInstance().getTimeInMillis());
+                Toast.makeText(MainActivity.this, "onError", Toast.LENGTH_SHORT).show();
+                insertOrUpdate(2);
             }
         });
     }
 
-    private void setNoInternetInfoMessage(){
+    private void setNoInternetInfoMessage() {
         loadedImage.setVisibility(View.GONE);
         infoTextView.setVisibility(View.VISIBLE);
         infoTextView.setText(getString(R.string.info_no_connection));
-        insertLink(urls,3, Calendar.getInstance().getTimeInMillis());
+        insertOrUpdate(3);
     }
 
-    private void insertLink(String url, int status, long time) {
-        Toast.makeText(this, url, Toast.LENGTH_LONG).show();
+    private void insertOrUpdate(int status) {
+        if (mStatus == -1)
+            insertLink(status, Calendar.getInstance().getTimeInMillis());
+        else if (mStatus != status)
+            updateLink(status, Calendar.getInstance().getTimeInMillis());
+    }
+
+    private void insertLink(int status, long time) {
         ContentValues cv = new ContentValues();
-        cv.put(URL, url);
+        cv.put(URL, urls);
         cv.put(STATUS, status);
         cv.put(TIME, time);
-        Uri resultUri = getContentResolver().insert(CONTACT_URI, cv);
-        Log.i(LOG_TAG, "Uri " + resultUri);
+        getContentResolver().insert(CONTACT_URI, cv);
+    }
+
+    private void updateLink(int status, long time) {
+        Toast.makeText(this, "updateLink", Toast.LENGTH_SHORT).show();
+        ContentValues cv = new ContentValues();
+        cv.put(URL, urls);
+        cv.put(STATUS, status);
+        cv.put(TIME, time);
+        int result = getContentResolver().update(CONTACT_URI, cv, ID + "= ?", new String[]{String.valueOf(getIntent().getIntExtra("Id", 0))});
+        Toast.makeText(this, "result = " + result, Toast.LENGTH_SHORT).show();
     }
 
     public static boolean hasConnection(final Context context) {

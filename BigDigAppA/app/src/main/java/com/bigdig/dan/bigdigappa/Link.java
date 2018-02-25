@@ -11,11 +11,13 @@ public class Link {
     private String mUrl;
     private int mStatus;
     private Date mDate;
+    private int mId;
 
-    public Link(String url, int status, Date time){
+    public Link(String url, int status, Date time, int id){
         mUrl = url;
         mStatus = status;
         mDate = time;
+        mId = id;
     }
 
     public String getUrl() {
@@ -30,6 +32,10 @@ public class Link {
         return mDate;
     }
 
+    public int getID() {
+        return mId;
+    }
+
     public static List<Link> getLinksFromCursor(Cursor cursor){
         List<Link> result = new ArrayList<>();
         cursor.moveToFirst();
@@ -38,7 +44,8 @@ public class Link {
             int status = cursor.getInt(cursor.getColumnIndex(DbOpenHelper.STATUS));
             long time = cursor.getLong(cursor.getColumnIndex(DbOpenHelper.TIME));
             Date date = new Date(time);
-            Link new_link = new Link(url,status,date);
+            int id = cursor.getInt(cursor.getColumnIndex(DbOpenHelper.ID));
+            Link new_link = new Link(url,status,date,id);
             result.add(new_link);
             cursor.moveToNext();
         }

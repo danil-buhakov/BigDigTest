@@ -11,6 +11,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
     public final static String URL = "url";
     public final static String STATUS = "status";
     public final static String TIME = "time";
+    public final static String ID = "_id";
 
     public DbOpenHelper(Context context) {
         super(context, DB_NAME, null, VERSION);
@@ -18,8 +19,8 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table " + TABLE_NAME + "(" +
-                " _id integer primary key autoincrement, " +
+        db.execSQL("create table " + TABLE_NAME + "( " +
+                ID+" integer primary key autoincrement, " +
                 URL + ", " +
                 STATUS+ ", " +
                 TIME +

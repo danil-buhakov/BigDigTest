@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         btnOpenImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                makeLoadPhotoIntent(editTextUrl.getText().toString(),-1);
+                makeLoadPhotoIntent(editTextUrl.getText().toString(),-1,-1);
             }
         });
         RecyclerView hisoryRecycler = (RecyclerView) findViewById(R.id.tab2);
@@ -97,10 +97,11 @@ public class MainActivity extends AppCompatActivity {
         mSortWas = R.id.action_sort_time;
     }
 
-    private void makeLoadPhotoIntent(String url, int status) {
+    private void makeLoadPhotoIntent(String url, int status, int id) {
         Intent i = new Intent("com.bigdig.dan.IMAGE");
         i.putExtra("String", url);
         i.putExtra("Status", status);
+        i.putExtra("Id",id);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
     }
@@ -215,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
             cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    makeLoadPhotoIntent(link.getUrl(),link.getStatus());
+                    makeLoadPhotoIntent(link.getUrl(),link.getStatus(),link.getID());
                 }
             });
         }

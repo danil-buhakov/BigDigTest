@@ -65,7 +65,7 @@ public class DbContentProvider extends ContentProvider {
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         Log.i(TAG, "delete");
-        if(uri!=HISTORY_CONTENT_URI) {
+        if(!uri.equals(HISTORY_CONTENT_URI)) {
             Log.i(TAG, "Wrong URI: " + uri);
             return 0;
         }
@@ -76,7 +76,7 @@ public class DbContentProvider extends ContentProvider {
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
         Log.i(TAG, "update");
-        if(uri!=HISTORY_CONTENT_URI) {
+        if(!uri.equals(HISTORY_CONTENT_URI)) {
             Log.i(TAG, "Wrong URI: " + uri);
             return 0;
         }
