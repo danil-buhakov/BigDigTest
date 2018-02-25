@@ -48,7 +48,7 @@ public class Link {
     public static final Comparator<Link> COMPARE_BY_DATE = new Comparator<Link>() {
         @Override
         public int compare(Link o1, Link o2) {
-            return (int)(o1.getDate().getTime()-o2.getDate().getTime());
+            return (int)(o2.getDate().getTime()-o1.getDate().getTime());
         }
     };
 
