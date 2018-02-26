@@ -22,7 +22,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -30,7 +29,6 @@ import com.squareup.picasso.Target;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Calendar;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -57,7 +55,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
-        mStatus = getIntent().getIntExtra("Status", -1);
+        checkFromWhereCalled();
+    }
+
+    private void checkFromWhereCalled(){
         if (mStatus == -1)
             calledFromTest();
         else
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         urls = getIntent().getStringExtra("String");
         loadedImage = (ImageView) findViewById(R.id.loaded_image);
         infoTextView = (TextView) findViewById(R.id.txt_info);
+        mStatus = getIntent().getIntExtra("Status", -1);
     }
 
     private void calledFromTest() {
@@ -193,7 +195,6 @@ public class MainActivity extends AppCompatActivity {
         loadedImage.setVisibility(View.GONE);
         infoTextView.setVisibility(View.VISIBLE);
         infoTextView.setText(getString(R.string.info_error_loading));
-        insertOrUpdate(3);
     }
 
     private void insertOrUpdate(int status) {
