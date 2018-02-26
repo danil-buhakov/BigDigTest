@@ -1,21 +1,36 @@
 package com.bigdig.dan.bigdigappb;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Calendar;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,10 +44,13 @@ public class MainActivity extends AppCompatActivity {
     private final static String TIME = "time";
     public final static String ID = "_id";
 
+    public final static String[] PERMISSIONS = {"android.permission.WRITE_EXTERNAL_STORAGE"};
+
     private String urls;
     private ImageView loadedImage;
     private TextView infoTextView;
     private int mStatus;
+    private Bitmap imageBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,9 +89,10 @@ public class MainActivity extends AppCompatActivity {
         if (mStatus == 1) {
             if (hasConnection(this)) {
                 loadImage();
-                Intent serviceIntent = new Intent(this, DeletionService.class);
-                serviceIntent.putExtra("Id", getIntent().getIntExtra("Id", -1));
-                startService(serviceIntent);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    checkPermission();
+                } else
+                    calledGreenFromHistory();
             } else {
                 setNoInternetInfoMessage();
             }
@@ -82,26 +101,98 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void calledGreenFromHistory(){
+        startDeletionService();
+        saveImage();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void checkPermission(){
+        if(checkSelfPermission(PERMISSIONS[0])== PackageManager.PERMISSION_GRANTED)
+            calledGreenFromHistory();
+        else
+        if(!shouldShowRequestPermissionRationale(PERMISSIONS[0]))
+            requestPermissions(PERMISSIONS,1);
+        else
+            new AlertDialog.Builder(this)
+                    .setMessage("Для сохранения фото необходимо разрешение на запись файлов")
+                    .setTitle("Разрешение")
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @SuppressLint("NewApi")
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            requestPermissions(PERMISSIONS,1);
+                        }
+                    }).create().show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode==1){
+            if(grantResults[0]==PackageManager.PERMISSION_GRANTED)
+                calledGreenFromHistory();
+        }
+    }
+
+    private void startDeletionService() {
+        Intent serviceIntent = new Intent(this, DeletionService.class);
+        serviceIntent.putExtra("Id", getIntent().getIntExtra("Id", -1));
+        startService(serviceIntent);
+    }
+
     private void loadImage() {
         loadedImage.setVisibility(View.VISIBLE);
         infoTextView.setVisibility(View.GONE);
-        Picasso.with(this).load(urls).placeholder(android.R.drawable.stat_sys_download).into(loadedImage, new Callback() {
+        Picasso.with(this).load(urls).into(new Target() {
             @Override
-            public void onSuccess() {
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                 insertOrUpdate(1);
+                imageBitmap = bitmap;
+                loadedImage.setImageBitmap(bitmap);
             }
 
             @Override
-            public void onError() {
+            public void onBitmapFailed(Drawable errorDrawable) {
                 insertOrUpdate(2);
+                setErrorMessage();
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
             }
         });
+    }
+
+    private void saveImage() {
+        String root = Environment.getExternalStorageDirectory().toString();
+        File myDir = new File(root + "/BIGDIG/test/B");
+        Log.i(LOG_TAG, myDir.getAbsolutePath());
+        myDir.mkdirs();
+        String fname = "Image-" + urls.hashCode() + ".jpg";
+        File file = new File(myDir, fname);
+        if (file.exists()) file.delete();
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void setNoInternetInfoMessage() {
         loadedImage.setVisibility(View.GONE);
         infoTextView.setVisibility(View.VISIBLE);
         infoTextView.setText(getString(R.string.info_no_connection));
+        insertOrUpdate(3);
+    }
+
+    private void setErrorMessage() {
+        loadedImage.setVisibility(View.GONE);
+        infoTextView.setVisibility(View.VISIBLE);
+        infoTextView.setText(getString(R.string.info_error_loading));
         insertOrUpdate(3);
     }
 
