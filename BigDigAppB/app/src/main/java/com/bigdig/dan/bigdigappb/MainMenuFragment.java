@@ -12,10 +12,13 @@ import android.widget.TextView;
 public class MainMenuFragment extends Fragment {
     TextView mCountdownTextView;
     IExit mIExit;
+    final int conutTime = 10000;
+    final int conutInterval = 1000;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_main_menu,container,false);
+        View v = inflater.inflate(R.layout.fragment_main_menu, container, false);
         mCountdownTextView = (TextView) v.findViewById(R.id.txt_countdown);
         return v;
     }
@@ -23,10 +26,10 @@ public class MainMenuFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        new CountDownTimer(10000,1000) {
+        new CountDownTimer(conutTime, conutInterval) {
             @Override
             public void onTick(long millisUntilFinished) {
-                mCountdownTextView.setText(String.valueOf(millisUntilFinished/1000));
+                mCountdownTextView.setText(String.valueOf(millisUntilFinished / conutInterval));
             }
 
             @Override
@@ -36,11 +39,11 @@ public class MainMenuFragment extends Fragment {
         }.start();
     }
 
-    public void setIExit(IExit exit){
+    public void setIExit(IExit exit) {
         mIExit = exit;
     }
 
-    public interface IExit{
+    public interface IExit {
         void Exit();
     }
 }

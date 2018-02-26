@@ -6,6 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity implements MainMenuFragment.IExit {
 
+    private static final String INTENT_STATUS = "Status";
+    private static final String INTENT_ID = "Id";
+    private static final String INTENT_URL = "String";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -13,22 +17,21 @@ public class MainActivity extends AppCompatActivity implements MainMenuFragment.
         checkStartApp();
     }
 
-    private void checkStartApp(){
-        String urls = getIntent().getStringExtra("String");
+    private void checkStartApp() {
+        String urls = getIntent().getStringExtra(INTENT_URL);
         Fragment fragment;
-        if(urls ==null) {
+        if (urls == null) {
             fragment = new MainMenuFragment();
             ((MainMenuFragment) fragment).setIExit(this);
-        }
-        else {
+        } else {
             fragment = AppAFragment.newInstance(
-                    getIntent().getIntExtra("Status",-1),
-                    getIntent().getIntExtra("Id",-1),
+                    getIntent().getIntExtra(INTENT_STATUS, -1),
+                    getIntent().getIntExtra(INTENT_ID, -1),
                     urls
             );
         }
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container,fragment)
+                .replace(R.id.fragment_container, fragment)
                 .commit();
     }
 

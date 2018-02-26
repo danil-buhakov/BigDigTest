@@ -3,4 +3,6 @@
     <string name="info_no_connection">Отсутствует интернет соедниенеие</string>
     <string name="info_error_loading">Ошибка при загрузке изображения</string>
     <string name="txt_exit_text">Приложение B не является самостоятельным и будет закрыто через</string>
+    <string name="permission_message">Для сохранения фото необходимо разрешение на запись файлов</string>
+    <string name="permission_title">Разрешение</string>
 </resources>

@@ -9,6 +9,8 @@ import java.util.TimerTask;
 
 public class DeletionService extends Service {
     int id;
+    private static final String ACTION = "com.bigdig.dan.actin.DB_UPDATED";
+    final int delay = 15000;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -20,11 +22,11 @@ public class DeletionService extends Service {
                     getContentResolver().delete(AppAFragment.HISTORY_URI, AppAFragment.ID + "= ?"
                             , new String[]{String.valueOf(id)});
                     Intent broadcastIntent = new Intent();
-                    broadcastIntent.setAction("com.bigdig.dan.actin.DB_UPDATED");
+                    broadcastIntent.setAction(ACTION);
                     sendBroadcast(broadcastIntent);
                     stopSelf();
                 }
-            }, 15000);
+            }, delay);
         return START_REDELIVER_INTENT;
     }
 

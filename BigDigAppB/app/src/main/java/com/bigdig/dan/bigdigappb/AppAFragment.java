@@ -47,13 +47,19 @@ public class AppAFragment extends Fragment {
     public static final Uri HISTORY_URI = Uri
             .parse("content://com.bigdig.dan.provider.History/history");
 
+    private static final String ARGS_STATUS = "Status";
+    private static final String ARGS_ID = "Id";
+    private static final String ARGS_URL = "Url";
+
+    private static final String LOAD_FOLDER = "/BIGDIG/test/B";
+
     private final static String[] PERMISSIONS = {"android.permission.WRITE_EXTERNAL_STORAGE"};
 
-    public static AppAFragment newInstance(int status, int id, String url){
+    public static AppAFragment newInstance(int status, int id, String url) {
         Bundle args = new Bundle();
-        args.putInt("Status",status);
-        args.putInt("Id",id);
-        args.putString("Url",url);
+        args.putInt(ARGS_STATUS, status);
+        args.putInt(ARGS_ID, id);
+        args.putString(ARGS_URL, url);
         AppAFragment fragment = new AppAFragment();
         fragment.setArguments(args);
         return fragment;
@@ -62,7 +68,7 @@ public class AppAFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_app_a,container,false);
+        View v = inflater.inflate(R.layout.fragment_app_a, container, false);
         init(v);
         return v;
     }
@@ -75,12 +81,12 @@ public class AppAFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        urls = getArguments().getString("Url");
+        urls = getArguments().getString(ARGS_URL);
         checkFromWhereCalled();
     }
 
-    private void checkFromWhereCalled(){
-        mStatus = getArguments().getInt("Status");
+    private void checkFromWhereCalled() {
+        mStatus = getArguments().getInt(ARGS_STATUS);
         if (mStatus == -1)
             calledFromTest();
         else
@@ -115,42 +121,41 @@ public class AppAFragment extends Fragment {
         }
     }
 
-    private void calledGreenFromHistory(){
+    private void calledGreenFromHistory() {
         startDeletionService();
         saveImage();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-    private void checkPermission(){
-        if(getActivity().checkSelfPermission(PERMISSIONS[0])== PackageManager.PERMISSION_GRANTED)
+    private void checkPermission() {
+        if (getActivity().checkSelfPermission(PERMISSIONS[0]) == PackageManager.PERMISSION_GRANTED)
             calledGreenFromHistory();
-        else
-        if(!shouldShowRequestPermissionRationale(PERMISSIONS[0]))
-            requestPermissions(PERMISSIONS,1);
+        else if (!shouldShowRequestPermissionRationale(PERMISSIONS[0]))
+            requestPermissions(PERMISSIONS, 1);
         else
             new AlertDialog.Builder(getActivity())
-                    .setMessage("Для сохранения фото необходимо разрешение на запись файлов")
-                    .setTitle("Разрешение")
+                    .setMessage(R.string.permission_message)
+                    .setTitle(R.string.permission_title)
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @SuppressLint("NewApi")
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            requestPermissions(PERMISSIONS,1);
+                            requestPermissions(PERMISSIONS, 1);
                         }
                     }).create().show();
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode==1){
-            if(grantResults[0]==PackageManager.PERMISSION_GRANTED)
+        if (requestCode == 1) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 calledGreenFromHistory();
         }
     }
 
     private void startDeletionService() {
         Intent serviceIntent = new Intent(getActivity(), DeletionService.class);
-        serviceIntent.putExtra("Id", getArguments().getInt("Id"));
+        serviceIntent.putExtra(ARGS_ID, getArguments().getInt(ARGS_ID));
         getActivity().startService(serviceIntent);
     }
 
@@ -180,7 +185,7 @@ public class AppAFragment extends Fragment {
 
     private void saveImage() {
         String root = Environment.getExternalStorageDirectory().toString();
-        File myDir = new File(root + "/BIGDIG/test/B");
+        File myDir = new File(root + LOAD_FOLDER);
         myDir.mkdirs();
         String fname = "Image-" + urls.hashCode() + ".jpg";
         File file = new File(myDir, fname);

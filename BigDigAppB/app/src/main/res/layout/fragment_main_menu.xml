@@ -7,17 +7,17 @@
         android:id="@+id/txt_countdown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/txt_countdown_text_size"
-        android:textColor="@android:color/holo_red_dark"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="@dimen/txt_countdown_text_size" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_above="@+id/txt_countdown"
+        android:layout_centerHorizontal="true"
         android:layout_margin="@dimen/txt_exit_margin"
-        android:text="@string/txt_exit_text"/>
+        android:text="@string/txt_exit_text" />
 
 </RelativeLayout>
