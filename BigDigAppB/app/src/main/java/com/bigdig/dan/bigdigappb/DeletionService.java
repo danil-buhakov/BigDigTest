@@ -17,7 +17,7 @@ public class DeletionService extends Service {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    getContentResolver().delete(MainActivity.HISTORY_URI, MainActivity.ID + "= ?"
+                    getContentResolver().delete(AppAFragment.HISTORY_URI, AppAFragment.ID + "= ?"
                             , new String[]{String.valueOf(id)});
                     Intent broadcastIntent = new Intent();
                     broadcastIntent.setAction("com.bigdig.dan.actin.DB_UPDATED");
