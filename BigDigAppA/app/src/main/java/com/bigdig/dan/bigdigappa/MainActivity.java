@@ -5,8 +5,8 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -27,10 +27,14 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String BROADCAST_DB_UPDATE = "com.bigdig.dan.actin.DB_UPDATED";
+    private static final String ACTION_APPB = "com.bigdig.dan.IMAGE";
+
+    private static final String INTENT_URL = "String";
+    private static final String INTENT_STATUS = "Status";
+    private static final String INTENT_ID = "Id";
 
     private EditText editTextUrl;
 
-    private DbOpenHelper mDbOpenHelper;
     private SQLiteDatabase mDatabase;
 
     private List<Link> mLinks;
@@ -39,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem mMenuItemSortStatus;
     private int mSortWas;
     private DbUpdateReceiver mDbUpdateReceiver;
+    private final String tab1Id = "tab1";
+    private final String tab2Id = "tab2";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,12 +60,12 @@ public class MainActivity extends AppCompatActivity {
         TabHost tabHost = (TabHost) findViewById(R.id.tabHost);
         tabHost.setup();
 
-        TabHost.TabSpec spec = tabHost.newTabSpec("tab1");
+        TabHost.TabSpec spec = tabHost.newTabSpec(tab1Id);
         spec.setContent(R.id.tab1);
         spec.setIndicator(getString(R.string.tab_1_name));
         tabHost.addTab(spec);
 
-        spec = tabHost.newTabSpec("tab2");
+        spec = tabHost.newTabSpec(tab2Id);
         spec.setContent(R.id.tab2);
         spec.setIndicator(getString(R.string.tab_2_name));
         tabHost.addTab(spec);
@@ -67,10 +73,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabChanged(String tabId) {
                 switch (tabId) {
-                    case "tab1":
+                    case tab1Id:
                         hideMenu();
                         break;
-                    case "tab2":
+                    case tab2Id:
                         showMenu();
                         break;
                 }
@@ -79,8 +85,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initDatabase() {
-        mDbOpenHelper = new DbOpenHelper(this);
-        mDatabase = mDbOpenHelper.getReadableDatabase();
+        DbOpenHelper dbOpenHelper = new DbOpenHelper(this);
+        mDatabase = dbOpenHelper.getReadableDatabase();
         mDbUpdateReceiver = new DbUpdateReceiver(this);
     }
 
@@ -90,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         btnOpenImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                makeLoadPhotoIntent(editTextUrl.getText().toString(),-1,-1);
+                makeLoadPhotoIntent(editTextUrl.getText().toString(), -1, -1);
             }
         });
         RecyclerView hisoryRecycler = (RecyclerView) findViewById(R.id.tab2);
@@ -103,10 +109,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void makeLoadPhotoIntent(String url, int status, int id) {
-        Intent i = new Intent("com.bigdig.dan.IMAGE");
-        i.putExtra("String", url);
-        i.putExtra("Status", status);
-        i.putExtra("Id",id);
+        Intent i = new Intent(ACTION_APPB);
+        i.putExtra(INTENT_URL, url);
+        i.putExtra(INTENT_STATUS, status);
+        i.putExtra(INTENT_ID, id);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
     }
@@ -124,10 +130,10 @@ public class MainActivity extends AppCompatActivity {
         mLinks.clear();
         mLinks.addAll(Link.getLinksFromCursor(cursor));
         cursor.close();
-        if(mSortWas==R.id.action_sort_time)
-            Collections.sort(mLinks,Link.COMPARE_BY_DATE);
+        if (mSortWas == R.id.action_sort_time)
+            Collections.sort(mLinks, Link.COMPARE_BY_DATE);
         else
-            Collections.sort(mLinks,Link.COMPARE_BY_STATUS);
+            Collections.sort(mLinks, Link.COMPARE_BY_STATUS);
         mHistoryAdapter.notifyDataSetChanged();
     }
 
@@ -141,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_sort_time:
                 timeSortClick();
                 break;
@@ -152,15 +158,15 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void timeSortClick(){
-        Collections.sort(mLinks,Link.COMPARE_BY_DATE);
+    private void timeSortClick() {
+        Collections.sort(mLinks, Link.COMPARE_BY_DATE);
         mHistoryAdapter.notifyDataSetChanged();
         mMenuItemSortTime.setVisible(false);
         mMenuItemSortStatus.setVisible(true);
     }
 
-    private void statusSortClick(){
-        Collections.sort(mLinks,Link.COMPARE_BY_STATUS);
+    private void statusSortClick() {
+        Collections.sort(mLinks, Link.COMPARE_BY_STATUS);
         mHistoryAdapter.notifyDataSetChanged();
         mMenuItemSortTime.setVisible(true);
         mMenuItemSortStatus.setVisible(false);
@@ -186,14 +192,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         updateLinks();
-        this.registerReceiver(mDbUpdateReceiver,new IntentFilter(BROADCAST_DB_UPDATE));
+        this.registerReceiver(mDbUpdateReceiver, new IntentFilter(BROADCAST_DB_UPDATE));
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        this.unregisterReceiver(mDbUpdateReceiver);
         super.onPause();
+        this.unregisterReceiver(mDbUpdateReceiver);
     }
 
     private class LinkHolder extends RecyclerView.ViewHolder {
@@ -228,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
             cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    makeLoadPhotoIntent(link.getUrl(),link.getStatus(),link.getID());
+                    makeLoadPhotoIntent(link.getUrl(), link.getStatus(), link.getID());
                 }
             });
         }

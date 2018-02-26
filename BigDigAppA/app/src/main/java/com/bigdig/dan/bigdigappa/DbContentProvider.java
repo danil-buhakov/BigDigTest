@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 public class DbContentProvider extends ContentProvider {
     static final String AUTHORITY = "com.bigdig.dan.provider.History";
@@ -17,7 +16,7 @@ public class DbContentProvider extends ContentProvider {
     static final String TAG = "DbContentProvider";
 
     public static final Uri HISTORY_CONTENT_URI = Uri.parse(
-            "content://"+AUTHORITY+"/"+PATH);
+            "content://" + AUTHORITY + "/" + PATH);
 
     private SQLiteDatabase mDatabase;
     private DbOpenHelper mDbOpenHelper;
@@ -43,13 +42,13 @@ public class DbContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
-        if(!uri.equals(HISTORY_CONTENT_URI)) {
-           Log.i(TAG, "Wrong URI: " + uri);
+        if (!uri.equals(HISTORY_CONTENT_URI)) {
+            Log.i(TAG, "Wrong URI: " + uri);
             return null;
         }
         mDatabase = mDbOpenHelper.getWritableDatabase();
-        long rowID = mDatabase.insert(DbOpenHelper.TABLE_NAME,null,values);
-        int i =mDatabase.query(
+        long rowID = mDatabase.insert(DbOpenHelper.TABLE_NAME, null, values);
+        int i = mDatabase.query(
                 DbOpenHelper.TABLE_NAME,
                 null,
                 null,
@@ -58,29 +57,26 @@ public class DbContentProvider extends ContentProvider {
                 null,
                 null)
                 .getCount();
-        Log.i(TAG, "insert " + i);
         return ContentUris.withAppendedId(HISTORY_CONTENT_URI, rowID);
     }
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        Log.i(TAG, "delete");
-        if(!uri.equals(HISTORY_CONTENT_URI)) {
+        if (!uri.equals(HISTORY_CONTENT_URI)) {
             Log.i(TAG, "Wrong URI: " + uri);
             return 0;
         }
         mDatabase = mDbOpenHelper.getWritableDatabase();
-        return mDatabase.delete(DbOpenHelper.TABLE_NAME,selection,selectionArgs);
+        return mDatabase.delete(DbOpenHelper.TABLE_NAME, selection, selectionArgs);
     }
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        Log.i(TAG, "update");
-        if(!uri.equals(HISTORY_CONTENT_URI)) {
+        if (!uri.equals(HISTORY_CONTENT_URI)) {
             Log.i(TAG, "Wrong URI: " + uri);
             return 0;
         }
         mDatabase = mDbOpenHelper.getWritableDatabase();
-        return mDatabase.update(DbOpenHelper.TABLE_NAME,values,selection,selectionArgs);
+        return mDatabase.update(DbOpenHelper.TABLE_NAME, values, selection, selectionArgs);
     }
 }

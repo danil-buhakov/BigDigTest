@@ -6,4 +6,5 @@
     <string name="button_open_text">Ок</string>
     <string name="action_sort_time_title">Сортировать от старых к новым</string>
     <string name="action_sort_status_title">Сортировать по статусу</string>
+    <string name="update_db_receiver_text">База данных обновлена</string>
 </resources>

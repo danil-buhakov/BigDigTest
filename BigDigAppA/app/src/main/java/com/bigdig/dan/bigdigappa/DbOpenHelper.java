@@ -20,9 +20,9 @@ public class DbOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + TABLE_NAME + "( " +
-                ID+" integer primary key autoincrement, " +
+                ID + " integer primary key autoincrement, " +
                 URL + ", " +
-                STATUS+ ", " +
+                STATUS + ", " +
                 TIME +
                 ")"
         );
