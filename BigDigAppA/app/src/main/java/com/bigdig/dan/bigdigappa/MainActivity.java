@@ -119,9 +119,9 @@ public class MainActivity extends AppCompatActivity {
             if(i.resolveActivity(getPackageManager())!=null)
                 startActivity(i);
             else
-                Toast.makeText(this, "Необходимо установить BigDigAppB",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.app_b_not_installed_alert,Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Введите URL", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.url_not_installed_alert, Toast.LENGTH_SHORT).show();
         }
     }
 

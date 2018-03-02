@@ -7,4 +7,6 @@
     <string name="action_sort_time_title">Сортировать от старых к новым</string>
     <string name="action_sort_status_title">Сортировать по статусу</string>
     <string name="update_db_receiver_text">База данных обновлена</string>
+    <string name="app_b_not_installed_alert">Необходимо установить BigDigAppB</string>
+    <string name="url_not_installed_alert">Введите URL</string>
 </resources>
