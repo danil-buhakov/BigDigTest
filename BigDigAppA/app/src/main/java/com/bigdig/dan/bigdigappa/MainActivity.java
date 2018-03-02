@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -109,12 +110,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void makeLoadPhotoIntent(String url, int status, int id) {
-        Intent i = new Intent(ACTION_APPB);
-        i.putExtra(INTENT_URL, url);
-        i.putExtra(INTENT_STATUS, status);
-        i.putExtra(INTENT_ID, id);
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(i);
+        if (!url.equals("")) {
+            Intent i = new Intent(ACTION_APPB);
+            i.putExtra(INTENT_URL, url);
+            i.putExtra(INTENT_STATUS, status);
+            i.putExtra(INTENT_ID, id);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
+        } else
+            Toast.makeText(this, "Введите URL", Toast.LENGTH_SHORT).show();
     }
 
     public void updateLinks() {
