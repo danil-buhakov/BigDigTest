@@ -116,9 +116,13 @@ public class MainActivity extends AppCompatActivity {
             i.putExtra(INTENT_STATUS, status);
             i.putExtra(INTENT_ID, id);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(i);
-        } else
+            if(i.resolveActivity(getPackageManager())!=null)
+                startActivity(i);
+            else
+                Toast.makeText(this, "Необходимо установить BigDigAppB",Toast.LENGTH_SHORT).show();
+        } else {
             Toast.makeText(this, "Введите URL", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void updateLinks() {

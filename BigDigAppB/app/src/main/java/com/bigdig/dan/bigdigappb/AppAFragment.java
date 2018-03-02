@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -109,10 +110,7 @@ public class AppAFragment extends Fragment {
         if (mStatus == 1) {
             if (hasConnection(getActivity())) {
                 loadImage();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    checkPermission();
-                } else
-                    calledGreenFromHistory();
+                calledGreenFromHistory();
             } else {
                 setNoInternetInfoMessage();
             }
@@ -123,13 +121,16 @@ public class AppAFragment extends Fragment {
 
     private void calledGreenFromHistory() {
         startDeletionService();
-        saveImage();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkPermission();
+        } else
+            saveImage();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void checkPermission() {
         if (getActivity().checkSelfPermission(PERMISSIONS[0]) == PackageManager.PERMISSION_GRANTED)
-            calledGreenFromHistory();
+            saveImage();
         else if (!shouldShowRequestPermissionRationale(PERMISSIONS[0]))
             requestPermissions(PERMISSIONS, 1);
         else
@@ -149,7 +150,7 @@ public class AppAFragment extends Fragment {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == 1) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                calledGreenFromHistory();
+                saveImage();
         }
     }
 
@@ -184,7 +185,7 @@ public class AppAFragment extends Fragment {
     }
 
     private void saveImage() {
-        String root = Environment.getExternalStorageDirectory().toString();
+        String root = Environment.getExternalStorageDirectory().getPath();
         File myDir = new File(root + LOAD_FOLDER);
         myDir.mkdirs();
         String fname = "Image-" + urls.hashCode() + ".jpg";
